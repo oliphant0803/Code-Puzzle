@@ -11,6 +11,24 @@ function handleInputChange(value: string) {
   console.log(value);
 }
 
+function shuffle<T>(array: T[]): T[] {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+};
+
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -39,7 +57,8 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any, isLine: boolean)
   margin: `0 ${grid}px 0 0`,
 
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
+  background: isDragging ? 'lightgrey' : 'white',
+  border: 'solid',
 
   // styles we need to apply on draggables
   ...draggableStyle,
@@ -49,7 +68,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any, isLine: boolean)
     margin: `0 0 ${grid}px 0`,
 
     // change background colour if dragging
-    background: isDragging ? "lightgreen" : "grey",
+    background: isDragging ? "lightgrey" : "white",
 
     // styles we need to apply on draggables
     ...draggableStyle
@@ -58,12 +77,12 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any, isLine: boolean)
 
 const getListStyle = (isDraggingOver: boolean, isLine:boolean) => (
   isLine ? {
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
+    background: isDraggingOver ? 'lightgrey' : 'white',
     display: 'flex',
     padding: grid,
     overflow: 'none',
   } : {
-    background: isDraggingOver ? "lightblue" : "lightgrey",
+    background: isDraggingOver ? 'lightgrey' : 'white',
     padding: grid,
     width: 'fit-content'
   }
@@ -73,7 +92,7 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
   constructor(props: {lineNum:number}) {
     super(props);
     this.state = {
-      items: getLineItems(data, props.lineNum),
+      items: shuffle(getLineItems(data, props.lineNum)),
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -103,6 +122,7 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
         <Droppable droppableId="droppable" direction="horizontal">
           {(provided, snapshot) => (
             <div
+              className='question-content'
               ref={provided.innerRef}
               style={getListStyle(snapshot.isDraggingOver, true)}
               {...provided.droppableProps}
@@ -110,8 +130,9 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
               {this.state.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
                   {(provided, snapshot) => (
-                    (getDomItems(data, this.props.lineNum)[index].class!='input')?
+                    (getDomItems(data, this.props.lineNum).find(i => i.id === 'dom-'+item.id)!.class!='input') ?
                     (<div
+                      className={getDomItems(data, this.props.lineNum).find(i => i.id === 'dom-'+item.id)!.class}
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
@@ -152,7 +173,7 @@ class Move_Line extends Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      items: getItems(data)
+      items: shuffle(getItems(data))
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -200,7 +221,7 @@ class Move_Line extends Component<{}, AppState> {
                         false
                       )}
                     >
-                      <Move_Block lineNum={index}/>
+                      <Move_Block lineNum={Number(item.id.substring(5))}/>
                       {item.content}
                     </div>
                   )}

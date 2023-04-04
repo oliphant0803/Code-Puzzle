@@ -29,7 +29,12 @@ class InputBox extends Component<Props, State> {
     return (
       <div>
         <label>{this.props.label}</label>
-        <input type="text" value={this.state.value} onChange={this.handleChange} />
+        <input 
+          className='input-content'
+          type="text" 
+          value={this.state.value} 
+          onChange={this.handleChange} 
+        />
       </div>
     );
   }

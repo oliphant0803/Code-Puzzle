@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import './index.css';
+import './styles/index.css';
 import Test from './code-gen';
 import reportWebVitals from './reportWebVitals';
 import {Move_Block, Move_Line} from './move-block';
