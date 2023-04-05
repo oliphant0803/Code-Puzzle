@@ -5,6 +5,8 @@ import Question, { getDomItems } from './read-json';
 import data from "./data/test-fixed.json";
 import { getItems, getLineItems } from './read-json';
 import InputBox from './input-box';
+import Timer from './timer';
+import CodeBlock from './code-check';
 
 
 function handleInputChange(value: string) {
@@ -58,6 +60,7 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any, isLine: boolean)
 
   // change background colour if dragging
   background: isDragging ? 'lightgrey' : 'white',
+  borderRadius: '25px',
   border: 'solid',
 
   // styles we need to apply on draggables
@@ -201,6 +204,7 @@ class Move_Line extends Component<{}, AppState> {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
         <Question json={data}/>
+        <Timer />
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
             <div
@@ -231,6 +235,7 @@ class Move_Line extends Component<{}, AppState> {
             </div>
           )}
         </Droppable>
+      <CodeBlock id={'line-3'} />
       </DragDropContext>
     );
   }

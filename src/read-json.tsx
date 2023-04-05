@@ -41,7 +41,7 @@ export function getLineItems(json:any, num: number){
         line.tokens.map((token: Token , index: number) => (
             items.push({
                 id: 'line-'+lineNum+'-place-'+(index+line.indentations),
-                content: (token.text.includes('{input}')) ? token.text.replace('{input}', '') : token.text
+                content: token.text
             })
         ))
     ))

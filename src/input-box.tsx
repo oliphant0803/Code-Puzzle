@@ -9,7 +9,6 @@ interface State {
   value: string;
 }
 
-
 class InputBox extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -26,15 +25,27 @@ class InputBox extends Component<Props, State> {
   }
 
   render() {
+    const { label } = this.props;
+    const { value } = this.state;
+
+    const parts = label.split('{input}');
+    const inputIndex = parts.length <= 1 ? -1 : parts.length-1;
+
     return (
       <div>
-        <label>{this.props.label}</label>
-        <input 
-          className='input-content'
-          type="text" 
-          value={this.state.value} 
-          onChange={this.handleChange} 
-        />
+        {parts.map((part, index) => (
+          <span key={index}>
+            {index === inputIndex && (
+              <input
+                type="text"
+                className="input-content"
+                value={value}
+                onChange={this.handleChange}
+              />
+            )}
+            {part}
+          </span>
+        ))}
       </div>
     );
   }
