@@ -5,12 +5,15 @@ import Question, { getDomItems } from './read-json';
 import data from "./data/test-fixed.json";
 import { getItems, getLineItems } from './read-json';
 import InputBox from './input-box';
-import Timer from './timer';
-import CodeBlock from './code-check';
+import { Timer, getFinishedTime } from './timer';
+import { checkCode, checkLine } from './code-check';
+import solution from './data/solution.json';
 
-
-function handleInputChange(value: string) {
-  console.log(value);
+function handleInputChange() {
+  if(checkLine() && checkCode(solution)){
+    console.log("LINE PASSED");
+    document.getElementById('timer')!.style.visibility="hidden";
+  }
 }
 
 function shuffle<T>(array: T[]): T[] {
@@ -35,7 +38,6 @@ const reorder = (list: any[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
-
   return result;
 };
 
@@ -106,6 +108,7 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
       return;
     }
 
+
     const items = reorder(
       this.state.items,
       result.source.index,
@@ -114,7 +117,12 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
 
     this.setState({
       items,
+    }, () => {
+      if(checkLine() && checkCode(solution)){
+        getFinishedTime();
+      }
     });
+
   }
 
   // Normally you would want to split things out into separate components.
@@ -194,7 +202,12 @@ class Move_Line extends Component<{}, AppState> {
     );
 
     this.setState({
-      items
+      items,
+    }, () => {
+      if(checkLine() && checkCode(solution)){
+        console.log("LINE PASSED");
+        document.getElementById('timer')!.style.visibility="hidden";
+      }
     });
   }
 
@@ -235,7 +248,7 @@ class Move_Line extends Component<{}, AppState> {
             </div>
           )}
         </Droppable>
-      <CodeBlock id={'line-3'} />
+      {/* <CodeBlock id={'line-3'} /> */}
       </DragDropContext>
     );
   }

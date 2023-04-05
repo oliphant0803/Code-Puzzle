@@ -2,20 +2,20 @@
     "lines": [
       {
         "indentations": 0,
-        "text": "count=0"
+        "solution": "count=0"
       },
       {
         "indentations": 0,
-        "text": "while count<10:"
+        "solution": "while count<10:"
       },
       {
         "indentations": 1,
-        "text": "print('count'+str(count))"
+        "solution": "print('count'+str(count))"
       },
       {
         "indentations": 1,
-        "text": "count=count+1"
+        "solution": "count=count+1"
       }
-    ]
-  }
+  ]
+}
   

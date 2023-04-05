@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+let currTime = 0;
+
 function Timer() {
   const [time, setTime] = useState(0);
 
@@ -12,12 +14,22 @@ function Timer() {
       clearInterval(interval);
     };
   }, []);
+  currTime = time;
 
   return (
-    <div>
+    <div id='timer'>
       <h2>Time Spend: {time} seconds</h2>
     </div>
   );
 }
 
-export default Timer;
+function getFinishedTime(){
+  document.getElementById('timer')!.style.visibility="hidden";
+  console.log("Finished under" + currTime);
+}
+
+
+export {
+  Timer,
+  getFinishedTime
+}
