@@ -44,11 +44,13 @@ function decrement(lineNum:number) {
   if(indentations[lineNum] > 0){
     indentations[lineNum] -= 1;
     console.log("rm", indentations);
+    if(domLineItems[lineNum][0].class == 'indent'){
+      lineItems[lineNum].shift();
+      domLineItems[lineNum].shift();
+      return true
+    }
   }
-  if(domLineItems[lineNum][0].class == 'indent'){
-    lineItems[lineNum].shift();
-    domLineItems[lineNum].shift();
-  }
+  return false
 }
 
 function initItems(){

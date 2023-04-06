@@ -1,13 +1,14 @@
 import React, { Component, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Question , increment, decrement, lineItems, getItems, domLineItems } from './read-json';
+import { Question , increment, decrement, lineItems, getItems, domLineItems, indentations } from './read-json';
 import data from "./data/test-fixed.json";
 import { InputBox } from './input-box';
 import { Timer, getFinishedTime } from './timer';
 import { checkCode, checkLine } from './code-check';
 import solution from './data/solution.json';
 import { shuffle } from './utils';
+import { isV8IntrinsicIdentifier } from '@babel/types';
 
 
 function handleInputChange() {
@@ -74,30 +75,33 @@ const getListStyle = (isDraggingOver: boolean, isLine:boolean) => (
   }
 );
 
+
 class Move_Block extends Component<{ lineNum: number }, AppState> {
+  firstDrag: boolean;
+  currItems: Item[];
   constructor(props: {lineNum:number}) {
     super(props);
     this.state = {
       items: lineItems[props.lineNum],
     };
     this.onDragEnd = this.onDragEnd.bind(this);
+    this.currItems = lineItems[props.lineNum];
+    this.firstDrag = true;
   }
-
   onDragEnd(result: DropResult) {
     // dropped outside the list
     if (!result.destination) {
       return;
     }
-
-
-    const items = reorder(
+    this.firstDrag = false;
+    this.currItems = reorder(
       this.state.items,
       result.source.index,
       result.destination.index
     );
 
     this.setState({
-      items,
+      items: this.currItems,
     }, () => {
       if(checkLine() && checkCode(solution)){
         getFinishedTime();
@@ -119,8 +123,8 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
               style={getListStyle(snapshot.isDraggingOver, true)}
               {...provided.droppableProps}
             >
-              {this.state.items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
+              {this.currItems.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class=='indent'}>
                   {(provided, snapshot) => (
                     (domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class!='input') ?
                     (<div
@@ -159,8 +163,15 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
         <>        
           <button onClick={() => {
             increment(this.props.lineNum);
+            if(!this.firstDrag){
+              this.currItems.unshift({
+                id: 'line-'+this.props.lineNum+'-indent-'+indentations[this.props.lineNum],
+                content: ` `
+              })
+              console.log(this.currItems, lineItems[this.props.lineNum]);
+            }
             this.setState({
-              items: lineItems[this.props.lineNum],
+              items: this.currItems,
             }, () => {
               if(checkLine() && checkCode(solution)){
                 getFinishedTime();
@@ -168,14 +179,18 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
             });
           }} className='add-indent'>&gt;</button>
           <button onClick={() => {
-            decrement(this.props.lineNum);
-            this.setState({
-              items: lineItems[this.props.lineNum],
-            }, () => {
-              if(checkLine() && checkCode(solution)){
-                getFinishedTime();
-              }
-            });
+            if (decrement(this.props.lineNum)){
+              if(!this.firstDrag){this.currItems.shift();}
+              console.log(this.currItems, lineItems[this.props.lineNum]);
+              this.setState({
+                items: this.currItems,
+              }, () => {
+                if(checkLine() && checkCode(solution)){
+                  getFinishedTime();
+                }
+              });
+            }
+            
           }} className='rm-indent'>&lt;</button>
         </>
       </DragDropContext>
