@@ -4,15 +4,14 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import Question, { getDomItems } from './read-json';
 import data from "./data/test-fixed.json";
 import { getItems, getLineItems } from './read-json';
-import InputBox from './input-box';
+import { InputBox, increment, decrement } from './input-box';
 import { Timer, getFinishedTime } from './timer';
 import { checkCode, checkLine } from './code-check';
 import solution from './data/solution.json';
 
 function handleInputChange() {
   if(checkLine() && checkCode(solution)){
-    console.log("LINE PASSED");
-    document.getElementById('timer')!.style.visibility="hidden";
+    getFinishedTime();
   }
 }
 
@@ -89,7 +88,6 @@ const getListStyle = (isDraggingOver: boolean, isLine:boolean) => (
   } : {
     background: isDraggingOver ? 'lightgrey' : 'white',
     padding: grid,
-    width: 'fit-content'
   }
 );
 
@@ -175,6 +173,10 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
             </div>
           )}
         </Droppable>
+        <>        
+          <button onClick={increment} className='add-indent'>&gt;</button>
+          <button onClick={decrement} className='rm-indent'>&lt;</button>
+        </>
       </DragDropContext>
     );
   }
@@ -205,8 +207,7 @@ class Move_Line extends Component<{}, AppState> {
       items,
     }, () => {
       if(checkLine() && checkCode(solution)){
-        console.log("LINE PASSED");
-        document.getElementById('timer')!.style.visibility="hidden";
+        getFinishedTime();
       }
     });
   }
