@@ -1,10 +1,10 @@
 import React, { Component, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import Question, { getDomItems } from './read-json';
+import { Question , increment, decrement, getDomItems } from './read-json';
 import data from "./data/test-fixed.json";
 import { getItems, getLineItems } from './read-json';
-import { InputBox, increment, decrement } from './input-box';
+import { InputBox } from './input-box';
 import { Timer, getFinishedTime } from './timer';
 import { checkCode, checkLine } from './code-check';
 import solution from './data/solution.json';
@@ -174,8 +174,8 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
           )}
         </Droppable>
         <>        
-          <button onClick={increment} className='add-indent'>&gt;</button>
-          <button onClick={decrement} className='rm-indent'>&lt;</button>
+          <button onClick={() => increment(this.props.lineNum)} className='add-indent'>&gt;</button>
+          <button onClick={() => decrement(this.props.lineNum)} className='rm-indent'>&lt;</button>
         </>
       </DragDropContext>
     );

@@ -1,4 +1,6 @@
+import { updateExpression } from '@babel/types';
 import React from 'react';
+import data from './data/test-fixed.json';
 
 interface Token {
   text: string;
@@ -26,13 +28,36 @@ interface Props {
   };
 }
 
+let indentations:number[] = Array(data.lines.length).fill(0);
+
+function increment(lineNum:number) {
+  indentations[lineNum] += 1;
+  console.log("add", indentations);
+  //updateItems();
+}
+
+function decrement(lineNum:number) {
+  if(indentations[lineNum] > 0){
+    indentations[lineNum] -= 1;
+    console.log("rm", indentations);
+  }
+  //updateItems();
+}
+
+// function updateItems(){
+//   //get the number of identation for the line items
+//   //update getlineDom 
+//   getLineItems(data, 1);
+//   getDomItems(data, 1);
+// }
+
 // get the items of each line from json questions
 export function getLineItems(json:any, num: number){
     var items: Item[] = [];
     var lines = json.lines;
     lines.map((line: Line, lineNum: number) => (
         (num == lineNum) &&
-        Array.from({ length: line.indentations }, (v, k) => k).map(k => (
+        Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
             items.push({
                 id: 'line-'+lineNum+'-place-'+k,
                 content: ` `
@@ -40,7 +65,7 @@ export function getLineItems(json:any, num: number){
         )) && 
         line.tokens.map((token: Token , index: number) => (
             items.push({
-                id: 'line-'+lineNum+'-place-'+(index+line.indentations),
+                id: 'line-'+lineNum+'-place-'+(index+indentations[num]),
                 content: token.text
             })
         ))
@@ -53,7 +78,7 @@ export function getDomItems(json:any, num: number){
     var lines = json.lines;
     lines.map((line: Line, lineNum: number) => (
         (num == lineNum) &&
-        Array.from({ length: line.indentations }, (v, k) => k).map(k => (
+        Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
             itemsDom.push({
               id: 'dom-line-'+lineNum+'-place-'+k,
               class: 'indent'
@@ -61,7 +86,7 @@ export function getDomItems(json:any, num: number){
         )) && 
         line.tokens.map((token: Token , index: number) => (
             itemsDom.push({
-              id: 'dom-line-'+lineNum+'-place-'+(index+line.indentations),
+              id: 'dom-line-'+lineNum+'-place-'+(index+indentations[num]),
               class: (token.type && !token.text.includes('{input}')) ? token.type : 'input'
             })
         ))
@@ -101,4 +126,8 @@ const Question: React.FC<Props> = ({ json }) => {
   );
 };
 
-export default Question;
+export {
+  Question,
+  increment,
+  decrement
+};

@@ -9,13 +9,6 @@ interface State {
   value: string;
 }
 
-function increment() {
-  console.log("add");
-}
-
-function decrement() {
-  console.log("rm");
-}
 
 class InputBox extends Component<Props, State> {
   constructor(props: Props) {
@@ -60,7 +53,5 @@ class InputBox extends Component<Props, State> {
 }
 
 export {
-  InputBox,
-  increment,
-  decrement
+  InputBox
 }
