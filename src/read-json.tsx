@@ -33,11 +33,13 @@ interface Props {
 let indentations:number[] = Array(data.lines.length).fill(0);
 let lineItems:[Item[]] = [[]];
 let domLineItems:[ItemDom[]] = [[]];
+let firstDragCheck:boolean[] = Array(data.lines.length).fill(true);
 
 function increment(lineNum:number) {
   indentations[lineNum] += 1;
   console.log("add", indentations);
   addItems(lineNum);
+  return true
 }
 
 function decrement(lineNum:number) {
@@ -159,5 +161,6 @@ export {
   decrement,
   lineItems,
   domLineItems,
-  indentations
+  indentations,
+  firstDragCheck
 };

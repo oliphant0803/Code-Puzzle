@@ -82,7 +82,7 @@ function checkCode(json: Props["json"]){
     const indent = answer.search(/\S/);
     answer = answer.slice(indent);
     if (line.indentations != indent){
-      console.log("step 1 failed", answer, indent);
+      //console.log("step 1 failed", answer, indent);
       correct = false;
       return false;
     }
@@ -100,11 +100,11 @@ function checkCode(json: Props["json"]){
       return match.trim();
     }));
     if (result != answer){
-      console.log("step 2 failed", answer, result);
+      //console.log("step 2 failed", answer, result);
       correct = false;
       return false;
     }
-    console.log(answer, result);
+    //console.log(answer, result);
   });
   return correct;
 }

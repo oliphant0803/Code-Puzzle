@@ -35,7 +35,7 @@ function Timer() {
 
 function getFinishedTime(){
   document.getElementById('timer')!.style.visibility="hidden";
-  console.log("Finished under" + currTime);
+  //console.log("Finished under" + currTime);
   const root = document.getElementById('root') as HTMLElement
   const endMessage = "Congraduations! You finished the task under " + currTime.toString() + " seconds";
   ReactDOM.render(<Popup title={'Game Ends'} message={endMessage}/>, root)

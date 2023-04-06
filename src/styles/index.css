@@ -28,6 +28,10 @@ code {
   margin: 0 8px 0 8px;
 }
 
+.indent{
+  color: transparent;
+}
+
 .built-in-function{
   color: rgb(99, 128, 207);
 }
