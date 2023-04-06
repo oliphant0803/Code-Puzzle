@@ -1,6 +1,8 @@
 import { updateExpression } from '@babel/types';
 import React from 'react';
 import data from './data/test-fixed.json';
+import { shuffle } from './utils';
+import { Move_Block, Move_Line } from './move-block';
 
 interface Token {
   text: string;
@@ -29,11 +31,13 @@ interface Props {
 }
 
 let indentations:number[] = Array(data.lines.length).fill(0);
+let lineItems:[Item[]] = [[]];
+let domLineItems:[ItemDom[]] = [[]];
 
 function increment(lineNum:number) {
   indentations[lineNum] += 1;
   console.log("add", indentations);
-  //updateItems();
+  addItems(lineNum);
 }
 
 function decrement(lineNum:number) {
@@ -41,15 +45,32 @@ function decrement(lineNum:number) {
     indentations[lineNum] -= 1;
     console.log("rm", indentations);
   }
-  //updateItems();
+  if(domLineItems[lineNum][0].class == 'indent'){
+    lineItems[lineNum].shift();
+    domLineItems[lineNum].shift();
+  }
 }
 
-// function updateItems(){
-//   //get the number of identation for the line items
-//   //update getlineDom 
-//   getLineItems(data, 1);
-//   getDomItems(data, 1);
-// }
+function initItems(){
+  data.lines.map((line: Line, lineNum: number) => (
+    getLineItems(data, lineNum) &&
+    getDomItems(data, lineNum)
+  ));
+}
+
+function addItems(lineNum:number){
+  //get the number of identation for the line items
+  //update getlineDom 
+  lineItems[lineNum].unshift({
+      id: 'line-'+lineNum+'-indent-'+indentations[lineNum],
+      content: ` `
+  })
+  
+  domLineItems[lineNum].unshift({
+    id: 'dom-line-'+lineNum+'-indent-'+indentations[lineNum],
+    class: 'indent'
+  })
+}
 
 // get the items of each line from json questions
 export function getLineItems(json:any, num: number){
@@ -57,20 +78,21 @@ export function getLineItems(json:any, num: number){
     var lines = json.lines;
     lines.map((line: Line, lineNum: number) => (
         (num == lineNum) &&
-        Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
-            items.push({
-                id: 'line-'+lineNum+'-place-'+k,
-                content: ` `
-            })
-        )) && 
+        // Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
+        //     items.push({
+        //         id: 'line-'+lineNum+'-place-'+k,
+        //         content: ` `
+        //     })
+        // )) && 
         line.tokens.map((token: Token , index: number) => (
             items.push({
-                id: 'line-'+lineNum+'-place-'+(index+indentations[num]),
+                id: 'line-'+lineNum+'-place-'+(index),
                 content: token.text
             })
         ))
     ))
-    return items
+    lineItems[num] = shuffle(items);
+    return items;
 };
 
 export function getDomItems(json:any, num: number){
@@ -78,19 +100,20 @@ export function getDomItems(json:any, num: number){
     var lines = json.lines;
     lines.map((line: Line, lineNum: number) => (
         (num == lineNum) &&
-        Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
-            itemsDom.push({
-              id: 'dom-line-'+lineNum+'-place-'+k,
-              class: 'indent'
-            })
-        )) && 
+        // Array.from({ length: indentations[num] }, (v, k) => k).map(k => (
+        //     itemsDom.push({
+        //       id: 'dom-line-'+lineNum+'-place-'+k,
+        //       class: 'indent'
+        //     })
+        // )) && 
         line.tokens.map((token: Token , index: number) => (
             itemsDom.push({
-              id: 'dom-line-'+lineNum+'-place-'+(index+indentations[num]),
+              id: 'dom-line-'+lineNum+'-place-'+(index),
               class: (token.type && !token.text.includes('{input}')) ? token.type : 'input'
             })
         ))
     ))
+    domLineItems[num] = itemsDom;
     return itemsDom
 }
 
@@ -126,8 +149,13 @@ const Question: React.FC<Props> = ({ json }) => {
   );
 };
 
+initItems();
+
 export {
   Question,
   increment,
-  decrement
+  decrement,
+  lineItems,
+  domLineItems,
+  indentations
 };

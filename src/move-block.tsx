@@ -1,37 +1,20 @@
 import React, { Component, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Question , increment, decrement, getDomItems } from './read-json';
+import { Question , increment, decrement, lineItems, getItems, domLineItems } from './read-json';
 import data from "./data/test-fixed.json";
-import { getItems, getLineItems } from './read-json';
 import { InputBox } from './input-box';
 import { Timer, getFinishedTime } from './timer';
 import { checkCode, checkLine } from './code-check';
 import solution from './data/solution.json';
+import { shuffle } from './utils';
+
 
 function handleInputChange() {
   if(checkLine() && checkCode(solution)){
     getFinishedTime();
   }
 }
-
-function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,  randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-};
 
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -95,7 +78,7 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
   constructor(props: {lineNum:number}) {
     super(props);
     this.state = {
-      items: shuffle(getLineItems(data, props.lineNum)),
+      items: lineItems[props.lineNum],
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -139,9 +122,9 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
               {this.state.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
                   {(provided, snapshot) => (
-                    (getDomItems(data, this.props.lineNum).find(i => i.id === 'dom-'+item.id)!.class!='input') ?
+                    (domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class!='input') ?
                     (<div
-                      className={getDomItems(data, this.props.lineNum).find(i => i.id === 'dom-'+item.id)!.class}
+                      className={domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class}
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
@@ -174,8 +157,26 @@ class Move_Block extends Component<{ lineNum: number }, AppState> {
           )}
         </Droppable>
         <>        
-          <button onClick={() => increment(this.props.lineNum)} className='add-indent'>&gt;</button>
-          <button onClick={() => decrement(this.props.lineNum)} className='rm-indent'>&lt;</button>
+          <button onClick={() => {
+            increment(this.props.lineNum);
+            this.setState({
+              items: lineItems[this.props.lineNum],
+            }, () => {
+              if(checkLine() && checkCode(solution)){
+                getFinishedTime();
+              }
+            });
+          }} className='add-indent'>&gt;</button>
+          <button onClick={() => {
+            decrement(this.props.lineNum);
+            this.setState({
+              items: lineItems[this.props.lineNum],
+            }, () => {
+              if(checkLine() && checkCode(solution)){
+                getFinishedTime();
+              }
+            });
+          }} className='rm-indent'>&lt;</button>
         </>
       </DragDropContext>
     );
