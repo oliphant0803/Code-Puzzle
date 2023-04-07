@@ -46,9 +46,13 @@ const Popup: React.FC<PopupProps> = ({ title, message }) => {
   
     const handleClose = () => {
       setShow(false);
-      //a new game
-      const root = document.getElementById('root') as HTMLElement
-      ReactDOM.render(<Move_Line/>, root)
+      //a new window
+      window.location.reload();
+    }
+
+    const newQuestion = () => {
+      setShow(false);
+      //a new question
     }
 
     return (
@@ -60,7 +64,10 @@ const Popup: React.FC<PopupProps> = ({ title, message }) => {
           <Modal.Body>{message}</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose} style={{ width: '150px', margin: "0 auto" }}>
-              Restart
+              Start Over
+            </Button>
+            <Button variant="primary" onClick={newQuestion} style={{ width: '150px', margin: "0 auto" }}>
+              Next Question
             </Button>
           </Modal.Footer>
         </Modal>

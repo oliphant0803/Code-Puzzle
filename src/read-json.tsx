@@ -137,7 +137,11 @@ export function getItems(json:any){
 // display the answer of the question for developers to see, will comment out
 const Question: React.FC<Props> = ({ json }) => {
   return (
-    <div>
+    <div className='question-div'>
+      <div className='question-block'>
+        Tutorial: write a program that print number 0 to 9 by moving the blocks and put down the correct input
+        <br></br>See below for example.
+      </div>
       {json.lines.map((line, index) => (
         <div key={index}>
           <span style={{ marginLeft: `${line.indentations * 20}px` }}>
