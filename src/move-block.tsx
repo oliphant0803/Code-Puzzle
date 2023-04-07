@@ -128,7 +128,11 @@ class Move_Block extends Component<{ lineNum: number }, LineState> {
               {...provided.droppableProps}
             >
               {currItems[this.props.lineNum].map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class=='indent'}>
+                (domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class=='indent')?
+                <div key={item.id} className={'indent'}>
+                  {item.content}
+                </div>:
+                <Draggable key={item.id} draggableId={item.id} index={index} >
                   {(provided, snapshot) => (
                     (domLineItems[this.props.lineNum].find(i => i.id === 'dom-'+item.id)!.class!='input') ?
                     (<div

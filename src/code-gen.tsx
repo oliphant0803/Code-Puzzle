@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 const configuration = new Configuration({
   // TODO: place this api-key into an .env file and do not commit the .env file to your repo
   // I will revoke this api-key after you are done with the task
-  // apiKey: "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",
+  //apiKey: "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",
 });
 
 export const openai = new OpenAIApi(configuration);

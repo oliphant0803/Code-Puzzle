@@ -30,6 +30,11 @@ code {
 
 .indent{
   color: transparent;
+  user-select: none; 
+  padding: 16px; 
+  margin: 0px 8px 0px 0px;
+  border-radius: 25px; 
+  border: solid;
 }
 
 .built-in-function{
