@@ -16,6 +16,58 @@ function shuffle<T>(array: T[]): T[] {
     return array;
 };
 
+const keywords = [
+    "while",
+    "if",
+    "else",
+    "for",
+    "switch",
+    "case",
+    "break",
+    "continue",
+    "return"
+];
+  
+const builtInFunctions = [
+    "print"
+];
+  
+const operators = [
+    "(",
+    ")",
+    "[",
+    "]",
+    "{",
+    "}",
+    ",",
+    ":",
+    ";",
+    "+",
+    "-",
+    "*",
+    "/",
+    "=",
+    "<",
+    ">",
+    "&",
+    "|",
+    "^",
+    "~",
+    "!",
+    "%",
+    "**",
+    "=",
+    "==",
+    "!=",
+    "<",
+    ">",
+    "<=",
+    ">="
+]
+
 export {
-    shuffle
+    shuffle,
+    operators,
+    builtInFunctions,
+    keywords
 }

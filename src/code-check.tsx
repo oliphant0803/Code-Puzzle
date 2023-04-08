@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Div {
   id: string;
 }
@@ -100,11 +98,11 @@ function checkCode(json: Props["json"]){
       return match.trim();
     }));
     if (result != answer){
-      //console.log("step 2 failed", answer, result);
+      console.log("step 2 failed", answer, result);
       correct = false;
       return false;
     }
-    //console.log(answer, result);
+    console.log(answer, result);
   });
   return correct;
 }

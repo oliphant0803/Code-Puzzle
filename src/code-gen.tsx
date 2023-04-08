@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 const configuration = new Configuration({
   // TODO: place this api-key into an .env file and do not commit the .env file to your repo
   // I will revoke this api-key after you are done with the task
-  //apiKey: "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",
-  //apiKey: "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",
 });
 
 export const openai = new OpenAIApi(configuration);
@@ -114,7 +112,6 @@ const test = async () => {
         "Write a program that uses a while loop to repeatedly ask the user to enter a password (as a number) and check if the password is equal to 123. If it is, display the message Password is correct. If it is not, display the message Password is incorrect and ask the user to re-enter the password. The program should stop when the user enters the number 123. Finally, after the user gets the correct password, display the message Password is correct.",
         ""
     );
-
     return code;
 };
 

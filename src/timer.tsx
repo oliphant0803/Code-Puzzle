@@ -3,8 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from "react-bootstrap";
 import ReactDOM from 'react-dom';
 import { Move_Line } from './move-block';
-import aiQuestion from './data/curr-question.json';
-import aiSolution from './data/curr-solution.json';
 import test from './code-gen';
 import { code2Question, code2Solution } from './question-gen';
 
@@ -13,7 +11,8 @@ interface PopupProps {
   message: string;
 }
 
-
+let aiQuestion = {};
+let aiSolution = {};
 let currTime = 0;
 
 function Timer() {
@@ -37,6 +36,19 @@ function Timer() {
   );
 }
 
+function getNewQuestion() {
+  document.getElementById('timer')!.style.visibility="hidden";
+  const root = document.getElementById('root') as HTMLElement;
+  const endMessage = "Skipped"
+  ReactDOM.render(<Popup title={'Game Ends'} message={endMessage}/>, root)
+}
+
+function Skip() {
+  return (
+    <button onClick={getNewQuestion} className="btn btn-primary skipped">Skip</button>
+  );
+}
+
 function getFinishedTime(){
   document.getElementById('timer')!.style.visibility="hidden";
   //console.log("Finished under" + currTime);
@@ -44,6 +56,7 @@ function getFinishedTime(){
   const endMessage = "Congraduations! You finished the task under " + currTime.toString() + " seconds";
   ReactDOM.render(<Popup title={'Game Ends'} message={endMessage}/>, root)
 }
+
 
 const Popup: React.FC<PopupProps> = ({ title, message }) => {
     const [show, setShow] = useState(true);
@@ -60,8 +73,19 @@ const Popup: React.FC<PopupProps> = ({ title, message }) => {
       //window.location.reload();
       //generate code for a openAI question
       const code = await test();
-      code2Solution(code);
-      code2Question(code);
+      // const code  = `
+      // password = ""
+      // while password != "123":
+      //     password = input("Please enter the password: ")
+      //     if password == "123":
+      //         print("Password is correct.")
+      //     else:
+      //         print("Password is incorrect. Please re-enter the password.")
+      
+      // print("Password is correct.")`;
+      aiSolution = code2Solution(code!);
+      aiQuestion = code2Question(code!, 5); //5 = number of random input blocks
+      //console.log(aiSolution, aiQuestion);
       //render new question
       if(Object.keys(aiQuestion).length > 0 && Object.keys(aiSolution).length > 0){
         const root = document.getElementById('root') as HTMLElement;
@@ -95,5 +119,6 @@ const Popup: React.FC<PopupProps> = ({ title, message }) => {
 export {
   Timer,
   getFinishedTime,
-  Popup
+  Popup,
+  Skip
 }

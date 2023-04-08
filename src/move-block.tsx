@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult, DragUpdate } from 'react-beautiful-dnd';
 import { Question , increment, decrement, lineItems, getItems, domLineItems, initItems } from './read-json';
 import { InputBox } from './input-box';
-import { Timer, getFinishedTime } from './timer';
+import { Timer, getFinishedTime, Skip } from './timer';
 import { checkCode, checkLine } from './code-check';
 import { shuffle } from './utils';
 
@@ -249,7 +249,9 @@ class Move_Line extends Component<{question: any, solution: any}, AppState> {
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <Question json={this.props.question}/>
+        {/* if you want to see the question hint */}
+        {/* <Question json={this.props.question}/> */}
+        <Skip />
         <Timer />
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
