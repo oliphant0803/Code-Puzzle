@@ -3,6 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from "react-bootstrap";
 import ReactDOM from 'react-dom';
 import { Move_Line } from './move-block';
+import aiQuestion from './data/curr-question.json';
+import aiSolution from './data/curr-solution.json';
+import test from './code-gen';
+import { code2Question, code2Solution } from './question-gen';
 
 interface PopupProps {
   title: string;
@@ -50,9 +54,21 @@ const Popup: React.FC<PopupProps> = ({ title, message }) => {
       window.location.reload();
     }
 
-    const newQuestion = () => {
+    const newQuestion = async () => {
       setShow(false);
       //a new question
+      //window.location.reload();
+      //generate code for a openAI question
+      const code = await test();
+      code2Solution(code);
+      code2Question(code);
+      //render new question
+      if(Object.keys(aiQuestion).length > 0 && Object.keys(aiSolution).length > 0){
+        const root = document.getElementById('root') as HTMLElement;
+        return ReactDOM.render(<Move_Line  question={aiQuestion} solution={aiSolution}/>, root);
+      }else{
+        alert("no more questions");
+      }
     }
 
     return (

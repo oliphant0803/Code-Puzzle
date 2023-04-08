@@ -1,8 +1,6 @@
-import { updateExpression } from '@babel/types';
 import React from 'react';
-import data from './data/test-fixed.json';
 import { shuffle } from './utils';
-import { Move_Block, Move_Line } from './move-block';
+import { indentations } from './move-block';
 
 interface Token {
   text: string;
@@ -30,14 +28,12 @@ interface Props {
   };
 }
 
-let indentations:number[] = Array(data.lines.length).fill(0);
 let lineItems:[Item[]] = [[]];
 let domLineItems:[ItemDom[]] = [[]];
-let firstDragCheck:boolean[] = Array(data.lines.length).fill(true);
 
 function increment(lineNum:number) {
   indentations[lineNum] += 1;
-  console.log("add", indentations);
+  // console.log("add", indentations);
   addItems(lineNum);
   return true
 }
@@ -45,7 +41,7 @@ function increment(lineNum:number) {
 function decrement(lineNum:number) {
   if(indentations[lineNum] > 0){
     indentations[lineNum] -= 1;
-    console.log("rm", indentations);
+    //console.log("rm", indentations);
     if(domLineItems[lineNum][0].class == 'indent'){
       lineItems[lineNum].shift();
       domLineItems[lineNum].shift();
@@ -55,10 +51,10 @@ function decrement(lineNum:number) {
   return false
 }
 
-function initItems(){
-  data.lines.map((line: Line, lineNum: number) => (
-    getLineItems(data, lineNum) &&
-    getDomItems(data, lineNum)
+function initItems(currData:{ lines: []; }){
+  currData.lines.map((line: Line, lineNum: number) => (
+    getLineItems(currData, lineNum) &&
+    getDomItems(currData, lineNum)
   ));
 }
 
@@ -157,14 +153,11 @@ const Question: React.FC<Props> = ({ json }) => {
   );
 };
 
-initItems();
-
 export {
   Question,
   increment,
   decrement,
   lineItems,
   domLineItems,
-  indentations,
-  firstDragCheck
+  initItems
 };

@@ -1,17 +1,14 @@
-import React, { Component, createRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component, createRef } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult, DragUpdate } from 'react-beautiful-dnd';
-import { Question , increment, decrement, lineItems, getItems, domLineItems, indentations, firstDragCheck } from './read-json';
-import data from "./data/test-fixed.json";
+import { Question , increment, decrement, lineItems, getItems, domLineItems, initItems } from './read-json';
 import { InputBox } from './input-box';
 import { Timer, getFinishedTime } from './timer';
 import { checkCode, checkLine } from './code-check';
-import solution from './data/solution.json';
 import { shuffle } from './utils';
 
 
 function handleInputChange() {
-  if(checkLine() && checkCode(solution)){
+  if(checkLine() && checkCode(currSolution)){
     getFinishedTime();
   }
 }
@@ -24,6 +21,11 @@ const reorder = (list: any[], startIndex: number, endIndex: number) => {
 };
 
 const grid = 8;
+
+let currSolution:{ lines: []; };
+let currData:{ lines: []; };
+let firstDragCheck:boolean[];
+let indentations:number[];
 
 
 interface Item {
@@ -80,7 +82,7 @@ const getListStyle = (isDraggingOver: boolean, isLine:boolean) => (
 );
 
 
-let currItems:Item[][]= Array.from({length: data.lines.length}, (_, i) => lineItems[i]);
+let currItems:Item[][];
 
 
 class Move_Block extends Component<{ lineNum: number }, LineState> {
@@ -90,7 +92,6 @@ class Move_Block extends Component<{ lineNum: number }, LineState> {
       items: lineItems[props.lineNum],
     };
     this.onDragEnd = this.onDragEnd.bind(this);
-
   }
   onDragEnd(result: DropResult) {
     // dropped outside the list
@@ -107,7 +108,7 @@ class Move_Block extends Component<{ lineNum: number }, LineState> {
     this.setState({
       items: currItems[this.props.lineNum],
     }, () => {
-      if(checkLine() && checkCode(solution)){
+      if(checkLine() && checkCode(currSolution)){
         getFinishedTime();
       }
     });
@@ -168,62 +169,34 @@ class Move_Block extends Component<{ lineNum: number }, LineState> {
             </div>
           )}
         </Droppable>
-        {/* <>        
-          <button onClick={() => {
-            increment(this.props.lineNum);
-            if(!this.firstDrag){
-              this.currItems.unshift({
-                id: 'line-'+this.props.lineNum+'-indent-'+indentations[this.props.lineNum],
-                content: ` `
-              })
-              //console.log(this.currItems, lineItems[this.props.lineNum]);
-            }
-            this.setState({
-              items: this.currItems,
-            }, () => {
-              if(checkLine() && checkCode(solution)){
-                getFinishedTime();
-              }
-            });
-          }} className='add-indent'>&gt;</button>
-          <button onClick={() => {
-            if (decrement(this.props.lineNum)){
-              if(!this.firstDrag){this.currItems.shift();}
-              //console.log(this.currItems, lineItems[this.props.lineNum]);
-              this.setState({
-                items: this.currItems,
-              }, () => {
-                if(checkLine() && checkCode(solution)){
-                  getFinishedTime();
-                }
-              });
-            }
-            
-          }} className='rm-indent'>&lt;</button>
-        </> */}
       </DragDropContext>
     );
   }
 }
 
-class Move_Line extends Component<{}, AppState> {
+class Move_Line extends Component<{question: any, solution: any}, AppState> {
   moveBlockRef: React.RefObject<Move_Block>;
   onStop: boolean;
-  constructor(props: {}) {
+  constructor(props: {question: any, solution: any}) {
     super(props);
     this.moveBlockRef = createRef();
     this.state = {
-      items: shuffle(getItems(data)),
+      items: shuffle(getItems(props.question)),
       dragUpdate: null,
     };
     this.onDragEnd = this.onDragEnd.bind(this);
     this.onDragUpdate = this.onDragUpdate.bind(this);
     this.onStop = true;
+    currData = props.question;
+    currSolution = props.solution;
+    initItems(currData);
+    currItems = Array.from({length: currData.lines.length}, (_, i) => lineItems[i]);
+    indentations = Array(currData.lines.length).fill(0);
+    firstDragCheck = Array(currData.lines.length).fill(true);
   }
 
   addIndent = (lineNum:number) => {
     if (this.moveBlockRef.current && increment(lineNum)) {
-      console.log(firstDragCheck);
       if(!firstDragCheck[lineNum]){
         currItems[lineNum].unshift({
           id: 'line-'+lineNum+'-indent-'+indentations[lineNum],
@@ -259,7 +232,7 @@ class Move_Line extends Component<{}, AppState> {
     this.setState({
       items,
     }, () => {
-      if(checkLine() && checkCode(solution)){
+      if(checkLine() && checkCode(this.props.solution)){
         getFinishedTime();
       }
     });
@@ -276,7 +249,7 @@ class Move_Line extends Component<{}, AppState> {
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <Question json={data}/>
+        <Question json={this.props.question}/>
         <Timer />
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
@@ -330,4 +303,6 @@ class Move_Line extends Component<{}, AppState> {
 export {
   Move_Block,
   Move_Line,
+  currData,
+  indentations
 }
